@@ -8,6 +8,7 @@ const LandingPage = () => {
     const [companyOptions, setCompanyOptions] = useState([]);
     const [loadingCompanies, setLoadingCompanies] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState(null);
+    const [hasSearched, setHasSearched] = useState(false);
     const searchTimeoutRef = useRef(null);
     const searchSectionRef = useRef(null);
 
@@ -62,6 +63,7 @@ const LandingPage = () => {
         }
 
         setErrorMessage('');
+        setHasSearched(true);
 
         const params = new URLSearchParams({
             companyId: selectedCompany.companyId || '',
@@ -198,20 +200,21 @@ const LandingPage = () => {
                 ref={searchSectionRef}
                 style={{
                     minHeight: '100vh',
-                    paddingTop: '80px',
-                    paddingBottom: '4rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
+                    alignItems: hasSearched ? 'flex-start' : 'center',
                     gap: '2rem',
                     padding: '80px 2rem 4rem',
+                    transition: 'all 0.6s ease',
                 }}
             >
                 <h2 style={{
-                    fontSize: '2rem',
+                    fontSize: hasSearched ? '1.5rem' : '2rem',
                     fontWeight: '700',
                     letterSpacing: '-0.01em',
-                    textAlign: 'center',
+                    textAlign: hasSearched ? 'left' : 'center',
+                    width: '100%',
+                    transition: 'all 0.6s ease',
                 }}>
                     <span style={{
                         background: 'linear-gradient(to right, #ffffff, #94a3b8)',
@@ -222,65 +225,120 @@ const LandingPage = () => {
                     </span>
                 </h2>
 
-                {/* Search Card */}
+                {/* Cards Row */}
                 <div style={{
-                    width: '100%',
-                    maxWidth: '520px',
-                    background: 'rgba(15, 23, 42, 0.4)',
-                    padding: '2rem',
-                    borderRadius: '24px',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    backdropFilter: 'blur(10px)',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1.25rem',
+                    gap: '1.5rem',
+                    width: '100%',
+                    justifyContent: hasSearched ? 'flex-start' : 'center',
+                    alignItems: 'flex-start',
+                    transition: 'all 0.6s ease',
                 }}>
-                    <div>
-                        <label style={labelStyle}>Company name or domain</label>
-                        <Select
-                            showSearch
-                            placeholder="Type to search companies..."
-                            value={selectedCompany ? selectedCompany.value : undefined}
-                            onSearch={handleCompanySearch}
-                            onChange={handleCompanyChange}
-                            options={companyOptions}
-                            filterOption={false}
-                            notFoundContent={loadingCompanies ? <Spin size="small" /> : null}
-                            style={{ width: '100%' }}
-                            size="large"
-                        />
+                    {/* Search Card */}
+                    <div style={{
+                        width: hasSearched ? '380px' : '100%',
+                        maxWidth: '520px',
+                        background: 'rgba(15, 23, 42, 0.4)',
+                        padding: hasSearched ? '1.5rem' : '2rem',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1.25rem',
+                        transition: 'all 0.6s ease',
+                        flexShrink: 0,
+                    }}>
+                        <div>
+                            <label style={labelStyle}>Company name or domain</label>
+                            <Select
+                                showSearch
+                                placeholder="Type to search companies..."
+                                value={selectedCompany ? selectedCompany.value : undefined}
+                                onSearch={handleCompanySearch}
+                                onChange={handleCompanyChange}
+                                options={companyOptions}
+                                filterOption={false}
+                                notFoundContent={loadingCompanies ? <Spin size="small" /> : null}
+                                style={{ width: '100%' }}
+                                size="large"
+                            />
+                        </div>
+
+                        {errorMessage && (
+                            <div style={{
+                                padding: '0.75rem 1rem',
+                                borderRadius: '10px',
+                                background: 'rgba(248, 113, 113, 0.12)',
+                                border: '1px solid rgba(248, 113, 113, 0.25)',
+                                color: '#fecaca',
+                                fontSize: '0.875rem',
+                            }}>
+                                {errorMessage}
+                            </div>
+                        )}
+
+                        <button
+                            style={{
+                                background: 'var(--gradient-main)',
+                                color: 'white',
+                                padding: '0.875rem 1.5rem',
+                                borderRadius: '12px',
+                                fontWeight: '600',
+                                fontSize: '1rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                transition: 'opacity 0.2s, transform 0.2s',
+                                boxShadow: '0 10px 20px -5px rgba(99, 102, 241, 0.4)',
+                                border: 'none',
+                                cursor: 'pointer',
+                                width: '100%',
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.opacity = '0.9';
+                                e.currentTarget.style.transform = 'translateY(-1px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.opacity = '1';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                            }}
+                            onClick={searchRecruitersByCompanySelection}
+                        >
+                            Search by Company <ArrowRight size={20} />
+                        </button>
                     </div>
 
-                    <button
-                        style={{
-                            background: 'var(--gradient-main)',
-                            color: 'white',
-                            padding: '0.875rem 1.5rem',
-                            borderRadius: '12px',
-                            fontWeight: '600',
-                            fontSize: '1rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            transition: 'opacity 0.2s, transform 0.2s',
-                            boxShadow: '0 10px 20px -5px rgba(99, 102, 241, 0.4)',
-                            border: 'none',
-                            cursor: 'pointer',
-                            width: '100%',
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.opacity = '0.9';
-                            e.currentTarget.style.transform = 'translateY(-1px)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.opacity = '1';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                        onClick={searchRecruitersByCompanySelection}
-                    >
-                        Search by Company <ArrowRight size={20} />
-                    </button>
+                    {/* Info Card — appears after first search */}
+                    <div style={{
+                        flex: 1,
+                        minWidth: 0,
+                        background: 'rgba(15, 23, 42, 0.4)',
+                        padding: '2rem',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        opacity: hasSearched ? 1 : 0,
+                        transform: hasSearched ? 'translateX(0)' : 'translateX(30px)',
+                        transition: 'opacity 0.6s ease 0.15s, transform 0.6s ease 0.15s',
+                        pointerEvents: hasSearched ? 'auto' : 'none',
+                        minHeight: '300px',
+                    }}>
+                        <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.25rem' }}>
+                            <span style={{
+                                background: 'linear-gradient(to right, #ffffff, #94a3b8)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                            }}>
+                                Company Info
+                            </span>
+                        </h3>
+                        <p style={{ color: 'var(--color-text-muted)', lineHeight: '1.6' }}>
+                            {/* Placeholder — add your custom content here */}
+                            Select and search a company to view detailed information.
+                        </p>
+                    </div>
                 </div>
             </div>
         </ConfigProvider>
