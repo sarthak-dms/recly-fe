@@ -1,13 +1,126 @@
 :root {
-  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --color-bg-dark: #0f172a;
-  --color-bg-card: rgba(30, 41, 59, 0.7);
-  --color-primary: #6366f1;
-  --color-primary-glow: rgba(99, 102, 241, 0.5);
-  --color-text-main: #f8fafc;
-  --color-text-muted: #94a3b8;
-  --color-border: rgba(148, 163, 184, 0.2);
-  --gradient-main: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  --font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --color-bg-dark: #f6f3e8;
+  --color-bg-card: rgba(255, 255, 255, 0.86);
+  --color-primary: #2f6b5f;
+  --color-primary-glow: rgba(47, 107, 95, 0.25);
+  --color-text-main: #21352f;
+  --color-text-muted: #5f746d;
+  --color-border: rgba(47, 107, 95, 0.18);
+  --color-border-strong: rgba(47, 107, 95, 0.28);
+  --gradient-main: linear-gradient(135deg, #2f6b5f 0%, #4f8974 100%);
+  --color-bg-accent-a: rgba(47, 107, 95, 0.09);
+  --color-bg-accent-b: rgba(210, 191, 134, 0.2);
+  --color-bg-accent-c: rgba(47, 107, 95, 0.06);
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f8f4;
+  --color-divider: #ecefe8;
+  --color-danger-bg: #fff3f2;
+  --color-danger-border: #f2bfbc;
+  --color-danger-text: #8b2722;
+  --color-success-bg: #f2fcf7;
+  --color-success-border: #b5ddcb;
+  --color-success-text: #1e6b4c;
+}
+
+[data-theme='classic'] {
+  --font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --color-bg-dark: #f6f3e8;
+  --color-bg-card: rgba(255, 255, 255, 0.86);
+  --color-primary: #2f6b5f;
+  --color-primary-glow: rgba(47, 107, 95, 0.25);
+  --color-text-main: #21352f;
+  --color-text-muted: #5f746d;
+  --color-border: rgba(47, 107, 95, 0.18);
+  --color-border-strong: rgba(47, 107, 95, 0.28);
+  --gradient-main: linear-gradient(135deg, #2f6b5f 0%, #4f8974 100%);
+  --color-bg-accent-a: rgba(47, 107, 95, 0.09);
+  --color-bg-accent-b: rgba(210, 191, 134, 0.2);
+  --color-bg-accent-c: rgba(47, 107, 95, 0.06);
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f8f4;
+  --color-divider: #ecefe8;
+  --color-danger-bg: #fff3f2;
+  --color-danger-border: #f2bfbc;
+  --color-danger-text: #8b2722;
+  --color-success-bg: #f2fcf7;
+  --color-success-border: #b5ddcb;
+  --color-success-text: #1e6b4c;
+}
+
+[data-theme='bmw'] {
+  --font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --color-bg-dark: #eef2f7;
+  --color-bg-card: rgba(255, 255, 255, 0.92);
+  --color-primary: #0057b8;
+  --color-primary-glow: rgba(0, 87, 184, 0.25);
+  --color-text-main: #17243a;
+  --color-text-muted: #5a6981;
+  --color-border: rgba(0, 87, 184, 0.18);
+  --color-border-strong: rgba(0, 87, 184, 0.3);
+  --gradient-main: linear-gradient(135deg, #0057b8 0%, #00a0df 100%);
+  --color-bg-accent-a: rgba(0, 87, 184, 0.14);
+  --color-bg-accent-b: rgba(0, 160, 223, 0.12);
+  --color-bg-accent-c: rgba(255, 255, 255, 0);
+  --color-surface: #ffffff;
+  --color-surface-muted: #edf2f8;
+  --color-divider: #dae3ef;
+  --color-danger-bg: #fff2f2;
+  --color-danger-border: #f4cccc;
+  --color-danger-text: #9d2424;
+  --color-success-bg: #edf8ff;
+  --color-success-border: #c1dff6;
+  --color-success-text: #1a4f7d;
+}
+
+[data-theme='netflix'] {
+  --font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --color-bg-dark: #141414;
+  --color-bg-card: rgba(22, 22, 22, 0.9);
+  --color-primary: #e50914;
+  --color-primary-glow: rgba(229, 9, 20, 0.35);
+  --color-text-main: #f4f4f4;
+  --color-text-muted: #b7b7b7;
+  --color-border: rgba(229, 9, 20, 0.28);
+  --color-border-strong: rgba(229, 9, 20, 0.42);
+  --gradient-main: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+  --color-bg-accent-a: rgba(229, 9, 20, 0.18);
+  --color-bg-accent-b: rgba(60, 0, 0, 0.4);
+  --color-bg-accent-c: rgba(0, 0, 0, 0.55);
+  --color-surface: #181818;
+  --color-surface-muted: #202020;
+  --color-divider: #2d2d2d;
+  --color-danger-bg: #35181a;
+  --color-danger-border: #7b3035;
+  --color-danger-text: #f3b7bc;
+  --color-success-bg: #143025;
+  --color-success-border: #2a674c;
+  --color-success-text: #b8e7d0;
+}
+
+[data-theme='batman'] {
+  --font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --color-bg-dark: #121723;
+  --color-bg-card: rgba(24, 29, 40, 0.9);
+  --color-primary: #f6c221;
+  --color-primary-glow: rgba(246, 194, 33, 0.28);
+  --color-text-main: #ebedf0;
+  --color-text-muted: #9da6b3;
+  --color-border: rgba(246, 194, 33, 0.22);
+  --color-border-strong: rgba(246, 194, 33, 0.36);
+  --gradient-main: linear-gradient(135deg, #f6c221 0%, #b68600 100%);
+  --color-bg-accent-a: rgba(246, 194, 33, 0.15);
+  --color-bg-accent-b: rgba(34, 39, 52, 0.3);
+  --color-bg-accent-c: rgba(16, 20, 30, 0.6);
+  --color-surface: #1a1f2c;
+  --color-surface-muted: #222a3a;
+  --color-divider: #2f3748;
+  --color-danger-bg: #3d2428;
+  --color-danger-border: #6f3b45;
+  --color-danger-text: #f7c7ce;
+  --color-success-bg: #203229;
+  --color-success-border: #3e6350;
+  --color-success-text: #c6eed9;
 }
 
 * {
@@ -24,8 +137,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image:
-    radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08) 0%, transparent 25%);
+    radial-gradient(circle at 10% 10%, var(--color-bg-accent-a) 0%, transparent 30%),
+    radial-gradient(circle at 90% 20%, var(--color-bg-accent-b) 0%, transparent 35%),
+    radial-gradient(circle at 70% 80%, var(--color-bg-accent-c) 0%, transparent 30%);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 button {
@@ -51,10 +166,10 @@ select {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #87a098;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #718b82;
 }

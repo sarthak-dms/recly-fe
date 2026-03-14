@@ -2,7 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Layers } from 'lucide-react';
 
-const Navbar = () => {
+const THEME_OPTIONS = [
+    { value: 'classic', label: 'Classic' },
+    { value: 'bmw', label: 'BMW Theme' },
+    { value: 'netflix', label: 'Netflix Theme' },
+    { value: 'batman', label: 'Batman Theme' },
+];
+
+const Navbar = ({ themeName, onThemeChange }) => {
     return (
         <nav style={{
             position: 'fixed',
@@ -10,10 +17,10 @@ const Navbar = () => {
             left: 0,
             right: 0,
             zIndex: 50,
-            backdropFilter: 'blur(12px)',
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(8px)',
+            backgroundColor: 'var(--color-bg-card)',
             borderBottom: '1px solid var(--color-border)',
-            padding: '1rem 2rem',
+            padding: '0.85rem 1.2rem',
         }}>
             <div style={{
                 maxWidth: '1200px',
@@ -30,23 +37,17 @@ const Navbar = () => {
                     textDecoration: 'none',
                     color: 'var(--color-primary)',
                     fontWeight: '700',
-                    fontSize: '1.5rem',
+                    fontSize: '1.35rem',
                     letterSpacing: '-0.025em',
                 }}>
-                    <Layers size={28} />
-                    <span style={{
-                        background: 'var(--gradient-main)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                    }}>
-                        Recly
-                    </span>
+                    <Layers size={24} />
+                    <span>Recly</span>
                 </Link>
 
                 {/* Navigation Links */}
                 <div style={{
                     display: 'flex',
-                    gap: '2rem',
+                    gap: '1rem',
                     alignItems: 'center',
                 }}>
                     <Link to="/" style={{
@@ -62,7 +63,7 @@ const Navbar = () => {
                         Home
                     </Link>
 
-                    <Link to="/login" style={{
+                    <Link to="/recruiters" style={{
                         textDecoration: 'none',
                         color: 'var(--color-text-muted)',
                         fontWeight: '500',
@@ -72,25 +73,27 @@ const Navbar = () => {
                         onMouseEnter={(e) => e.target.style.color = 'var(--color-text-main)'}
                         onMouseLeave={(e) => e.target.style.color = 'var(--color-text-muted)'}
                     >
-                        Login
+                        Recruiters
                     </Link>
 
-                    <Link to="/signup" style={{
-                        textDecoration: 'none',
-                        padding: '0.5rem 1.25rem',
-                        background: 'var(--gradient-main)',
-                        borderRadius: '9999px',
-                        color: 'white',
-                        fontWeight: '600',
-                        fontSize: '0.95rem',
-                        transition: 'opacity 0.2s ease',
-                        boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.39)',
-                    }}
-                        onMouseEnter={(e) => e.target.style.opacity = '0.9'}
-                        onMouseLeave={(e) => e.target.style.opacity = '1'}
+                    <select
+                        value={themeName}
+                        onChange={(event) => onThemeChange(event.target.value)}
+                        style={{
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '10px',
+                            background: 'var(--color-bg-card)',
+                            color: 'var(--color-text-main)',
+                            padding: '0.42rem 0.55rem',
+                            fontSize: '0.88rem',
+                        }}
                     >
-                        Get Started
-                    </Link>
+                        {THEME_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
             </div>
         </nav>
