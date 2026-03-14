@@ -1,10 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ConfigProvider, theme, Spin } from 'antd';
+import { ConfigProvider, theme, Spin, Table } from 'antd';
 import {
     getRecruitersByCompanyId,
     getRecruitersByDomain,
 } from '../services/recruiterService';
+
+const columns = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+        render: (text) => <span style={{ fontWeight: 600 }}>{text}</span>,
+    },
+    {
+        title: 'Designation',
+        dataIndex: 'designation',
+        key: 'designation',
+        render: (text) => text || 'N/A',
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+    },
+    {
+        title: 'Phone',
+        dataIndex: 'phone',
+        key: 'phone',
+        render: (text) => text || 'N/A',
+    },
+    {
+        title: 'Company',
+        dataIndex: 'companyName',
+        key: 'companyName',
+        render: (text) => text || 'N/A',
+    },
+    {
+        title: 'Domain',
+        dataIndex: 'domain',
+        key: 'domain',
+        render: (text) => text || 'N/A',
+    },
+    {
+        title: 'Company ID',
+        dataIndex: 'companyId',
+        key: 'companyId',
+        render: (text) => text ?? 'N/A',
+    },
+];
 
 const ResultsPage = () => {
     const [searchParams] = useSearchParams();
@@ -57,12 +101,21 @@ const ResultsPage = () => {
                 algorithm: theme.darkAlgorithm,
                 token: {
                     colorPrimary: '#6366f1',
-                    colorBgContainer: 'var(--color-bg-card)',
-                    colorBorder: 'var(--color-border)',
-                    colorText: 'var(--color-text-main)',
+                    colorBgContainer: '#0f172a',
+                    colorBorder: 'rgba(255, 255, 255, 0.08)',
+                    colorText: '#e2e8f0',
                     colorTextPlaceholder: 'var(--color-text-muted)',
-                    borderRadius: 12,
-                    fontSize: 16,
+                    borderRadius: 8,
+                    fontSize: 14,
+                },
+                components: {
+                    Table: {
+                        headerBg: 'rgba(99, 102, 241, 0.12)',
+                        headerColor: '#c7d2fe',
+                        rowHoverBg: 'rgba(99, 102, 241, 0.06)',
+                        borderColor: 'rgba(255, 255, 255, 0.06)',
+                        colorBgContainer: 'transparent',
+                    },
                 },
             }}
         >
@@ -74,10 +127,9 @@ const ResultsPage = () => {
                 alignItems: 'center',
                 padding: '100px 2rem 4rem',
             }}>
-                {/* Results Card */}
                 <div style={{
                     width: '100%',
-                    maxWidth: '960px',
+                    maxWidth: '1100px',
                     background: 'rgba(15, 23, 42, 0.4)',
                     padding: '2rem',
                     borderRadius: '24px',
@@ -107,7 +159,7 @@ const ResultsPage = () => {
                                 {label}
                             </p>
                         </div>
-                        {loading ? <Spin /> : (
+                        {!loading && (
                             <span style={{
                                 color: 'var(--color-text-muted)',
                                 fontSize: '0.875rem',
@@ -130,56 +182,15 @@ const ResultsPage = () => {
                         </div>
                     ) : null}
 
-                    {loading ? (
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            padding: '3rem',
-                        }}>
-                            <Spin size="large" />
-                        </div>
-                    ) : recruiters.length ? (
-                        <div style={{
-                            display: 'grid',
-                            gap: '1rem',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                        }}>
-                            {recruiters.map((recruiter) => (
-                                <div
-                                    key={`${recruiter.id}-${recruiter.email}`}
-                                    style={{
-                                        background: 'rgba(30, 41, 59, 0.7)',
-                                        border: '1px solid rgba(255, 255, 255, 0.06)',
-                                        borderRadius: '18px',
-                                        padding: '1.25rem',
-                                    }}
-                                >
-                                    <div style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '0.35rem' }}>
-                                        {recruiter.name}
-                                    </div>
-                                    <div style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-                                        {recruiter.designation || 'No designation'}
-                                    </div>
-                                    <div style={{ display: 'grid', gap: '0.45rem', color: '#cbd5e1' }}>
-                                        <span><strong>Email:</strong> {recruiter.email}</span>
-                                        <span><strong>Phone:</strong> {recruiter.phone || 'N/A'}</span>
-                                        <span><strong>Company:</strong> {recruiter.companyName || 'N/A'}</span>
-                                        <span><strong>Domain:</strong> {recruiter.domain || 'N/A'}</span>
-                                        <span><strong>Company Id:</strong> {recruiter.companyId ?? 'N/A'}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : !errorMessage ? (
-                        <div style={{
-                            padding: '1.25rem',
-                            borderRadius: '16px',
-                            background: 'rgba(30, 41, 59, 0.45)',
-                            color: 'var(--color-text-muted)',
-                        }}>
-                            No recruiters found.
-                        </div>
-                    ) : null}
+                    <Table
+                        columns={columns}
+                        dataSource={recruiters}
+                        loading={loading}
+                        rowKey={(record) => `${record.id}-${record.email}`}
+                        pagination={{ pageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '50'] }}
+                        scroll={{ x: 800 }}
+                        locale={{ emptyText: 'No recruiters found.' }}
+                    />
                 </div>
             </div>
         </ConfigProvider>
