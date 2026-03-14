@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ConfigProvider, theme } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import RevealOnScroll from '../components/RevealOnScroll';
+import BackdropMosaic from '../components/BackdropMosaic';
 import SearchPanel from '../components/SearchPanel';
-import SectionIntro from '../components/SectionIntro';
+import { useAuth } from '../context/AuthContext';
 import {
   searchCompanies,
   getRecruitersByCompanyId,
@@ -20,6 +20,7 @@ const LandingPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const searchTimeoutRef = useRef(null);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     return () => {
@@ -70,6 +71,16 @@ const LandingPage = () => {
   };
 
   const searchRecruitersByCompanySelection = async () => {
+    if (!isAuthenticated) {
+      navigate('/signin', {
+        state: {
+          from: '/',
+          message: 'Sign in with an admin account before searching recruiter data.',
+        },
+      });
+      return;
+    }
+
     if (!selectedCompany) {
       setErrorMessage('Select a company from the dropdown first.');
       return;
@@ -142,29 +153,36 @@ const LandingPage = () => {
         },
       }}
     >
-      <div className="page-shell">
-        <RevealOnScroll className="hero-panel hero-panel--fullscreen is-visible">
-          <SectionIntro
-            className="section-intro--full"
-            kicker="Recruiter Directory"
-            title="Discover the right recruiter contact before your outreach starts."
-            description="Recly helps you search company domains, pull recruiter results fast, and move into profile review with a cleaner, modern workflow."
-          />
-        </RevealOnScroll>
+      <div className="marketing-page">
+        <BackdropMosaic />
 
-        <RevealOnScroll className="landing-search-section" delay={120}>
-          <SearchPanel
-            selectedCompany={selectedCompany}
-            companyOptions={companyOptions}
-            loadingCompanies={loadingCompanies}
-            loadingRecruiters={loadingRecruiters}
-            onCompanySearch={handleCompanySearch}
-            onCompanyChange={handleCompanyChange}
-            onSearch={searchRecruitersByCompanySelection}
-          />
-        </RevealOnScroll>
+        <div className="page-shell page-shell--marketing">
+          <section className="marketing-hero">
+            <div className="marketing-hero__content">
+              <p className="marketing-hero__eyebrow">Recruiter Directory</p>
+              <h1 className="marketing-hero__title">
+                Get recruiter information first and reach out before everyone else.
+              </h1>
+              <p className="marketing-hero__subtitle">
+                Search company domains, find recruiter details faster, and move into
+                targeted outreach with a workflow built for early contact.
+              </p>
 
-        {errorMessage ? <div className="error-banner">{errorMessage}</div> : null}
+              <SearchPanel
+                selectedCompany={selectedCompany}
+                companyOptions={companyOptions}
+                loadingCompanies={loadingCompanies}
+                loadingRecruiters={loadingRecruiters}
+                onCompanySearch={handleCompanySearch}
+                onCompanyChange={handleCompanyChange}
+                onSearch={searchRecruitersByCompanySelection}
+                variant="hero"
+              />
+
+              {errorMessage ? <div className="error-banner">{errorMessage}</div> : null}
+            </div>
+          </section>
+        </div>
       </div>
     </ConfigProvider>
   );

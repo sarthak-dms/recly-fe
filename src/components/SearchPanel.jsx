@@ -9,27 +9,35 @@ const SearchPanel = ({
   onCompanySearch,
   onCompanyChange,
   onSearch,
+  variant = 'default',
 }) => {
-  return (
-    <section className="search-panel search-panel--modern">
-      <div className="search-panel__header">
-        <div className="search-icon">
-          <Building2 size={20} />
-        </div>
-        <div>
-          <p className="search-panel__eyebrow">Quick search</p>
-          <h2>Search a company and open recruiter profiles in one step</h2>
-        </div>
-      </div>
+  const isHeroVariant = variant === 'hero';
+  const placeholderText = isHeroVariant
+    ? 'Search by company name or domain, for example netflix.com'
+    : 'Type at least 2 characters to search a company';
 
-      <div className="search-panel__body">
+  return (
+    <section className={`search-panel ${isHeroVariant ? 'search-panel--hero' : 'search-panel--modern'}`}>
+      {isHeroVariant ? null : (
+        <div className="search-panel__header">
+          <div className="search-icon">
+            <Building2 size={20} />
+          </div>
+          <div>
+            <p className="search-panel__eyebrow">Quick search</p>
+            <h2>Search a company and open recruiter profiles in one step</h2>
+          </div>
+        </div>
+      )}
+
+      <div className={`search-panel__body${isHeroVariant ? ' search-panel__body--hero' : ''}`}>
         <div className="search-field">
           <label className="field-label">Company search</label>
           <Select
             showSearch
             filterOption={false}
             labelInValue
-            placeholder="Type at least 2 characters"
+            placeholder={placeholderText}
             value={
               selectedCompany
                 ? {
@@ -49,11 +57,11 @@ const SearchPanel = ({
         </div>
 
         <button
-          className="primary-button primary-button--glow"
+          className={`primary-button primary-button--glow${isHeroVariant ? ' primary-button--hero' : ''}`}
           onClick={onSearch}
           disabled={loadingRecruiters}
         >
-          <span>{loadingRecruiters ? 'Searching...' : 'View Recruiters'}</span>
+          <span>{loadingRecruiters ? 'Searching...' : isHeroVariant ? 'Search Recly' : 'View Recruiters'}</span>
           {loadingRecruiters ? null : <ArrowRight size={18} />}
         </button>
       </div>
