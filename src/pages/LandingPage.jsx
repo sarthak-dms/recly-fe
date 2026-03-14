@@ -1,189 +1,173 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Building2 } from 'lucide-react';
-import { Select, ConfigProvider, theme, Spin } from 'antd';
+import { ConfigProvider, theme } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import RevealOnScroll from '../components/RevealOnScroll';
+import SearchPanel from '../components/SearchPanel';
+import SectionIntro from '../components/SectionIntro';
 import {
-    searchCompanies,
-    getRecruitersByCompanyId,
-    getRecruitersByDomain,
+  searchCompanies,
+  getRecruitersByCompanyId,
+  getRecruitersByDomain,
 } from '../services/recruiterService';
 
 const RECRUITER_RESULTS_STORAGE_KEY = 'recruiter-search-results';
 
 const LandingPage = () => {
-    const [selectedCompany, setSelectedCompany] = useState(undefined);
-    const [companyOptions, setCompanyOptions] = useState([]);
-    const [loadingCompanies, setLoadingCompanies] = useState(false);
-    const [loadingRecruiters, setLoadingRecruiters] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const searchTimeoutRef = useRef(null);
-    const navigate = useNavigate();
+  const [selectedCompany, setSelectedCompany] = useState(undefined);
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [loadingCompanies, setLoadingCompanies] = useState(false);
+  const [loadingRecruiters, setLoadingRecruiters] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const searchTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
-    useEffect(() => () => {
-        if (searchTimeoutRef.current) {
-            clearTimeout(searchTimeoutRef.current);
-        }
-    }, []);
-
-    const handleCompanySearch = (value) => {
-        setErrorMessage('');
-
-        if (searchTimeoutRef.current) {
-            clearTimeout(searchTimeoutRef.current);
-        }
-
-        if (!value || value.trim().length < 2) {
-            setCompanyOptions([]);
-            return;
-        }
-
-        searchTimeoutRef.current = setTimeout(async () => {
-            setLoadingCompanies(true);
-
-            try {
-                const response = await searchCompanies(value.trim());
-                const companies = response?.resp?.companies || [];
-
-                setCompanyOptions(
-                    companies.map((company) => ({
-                        value: `${company.companyId ?? 'domain'}::${company.domain}`,
-                        label: company.domain,
-                        companyId: company.companyId,
-                        companyName: company.companyName,
-                        domain: company.domain,
-                        recruiterCount: company.recruiterCount,
-                    }))
-                );
-            } finally {
-                setLoadingCompanies(false);
-            }
-        }, 300);
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
     };
+  }, []);
 
-    const handleCompanyChange = (_, option) => {
-        setSelectedCompany(option);
-        setErrorMessage('');
-    };
+  const handleCompanySearch = (value) => {
+    setErrorMessage('');
 
-    const searchRecruitersByCompanySelection = async () => {
-        if (!selectedCompany) {
-            setErrorMessage('Select a company from the dropdown first.');
-            return;
-        }
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
 
-        setLoadingRecruiters(true);
-        setErrorMessage('');
+    if (!value || value.trim().length < 2) {
+      setCompanyOptions([]);
+      return;
+    }
 
-        try {
-            let response;
+    searchTimeoutRef.current = setTimeout(async () => {
+      setLoadingCompanies(true);
 
-            if (selectedCompany.companyId) {
-                response = await getRecruitersByCompanyId(selectedCompany.companyId);
-            } else {
-                response = await getRecruitersByDomain(selectedCompany.domain);
-            }
+      try {
+        const response = await searchCompanies(value.trim());
+        const companies = response?.resp?.companies || [];
 
-            const recruiterList = response?.resp?.recruiters || [];
-            const searchLabel = `${selectedCompany.companyName} (${selectedCompany.domain})`;
+        setCompanyOptions(
+          companies.map((company) => ({
+            value: `${company.companyId ?? 'domain'}::${company.domain}`,
+            label: company.domain,
+            companyId: company.companyId,
+            companyName: company.companyName,
+            domain: company.domain,
+            recruiterCount: company.recruiterCount,
+          }))
+        );
+      } finally {
+        setLoadingCompanies(false);
+      }
+    }, 300);
+  };
 
-            if (!recruiterList.length) {
-                setErrorMessage('No recruiters found for the selected company/domain.');
-                return;
-            }
+  const handleCompanyChange = (_, option) => {
+    setSelectedCompany(option);
+    setErrorMessage('');
+  };
 
-            const payload = {
-                recruiters: recruiterList,
-                searchLabel,
-                updatedAt: Date.now(),
-            };
+  const searchRecruitersByCompanySelection = async () => {
+    if (!selectedCompany) {
+      setErrorMessage('Select a company from the dropdown first.');
+      return;
+    }
 
-            sessionStorage.setItem(RECRUITER_RESULTS_STORAGE_KEY, JSON.stringify(payload));
-            navigate('/recruiters', { state: payload });
-        } finally {
-            setLoadingRecruiters(false);
-        }
-    };
+    setLoadingRecruiters(true);
+    setErrorMessage('');
 
-    const labelStyle = {
-        color: 'var(--color-text-muted)',
-        fontSize: '0.875rem',
-        fontWeight: '500',
-        marginBottom: '0.5rem',
-        display: 'block',
-    };
+    try {
+      let response;
 
-    return (
-        <ConfigProvider
-            theme={{
-                algorithm: theme.defaultAlgorithm,
-                token: {
-                    colorPrimary: '#2f6b5f',
-                    colorBgContainer: '#ffffff',
-                    colorBorder: 'var(--color-border)',
-                    colorText: 'var(--color-text-main)',
-                    colorTextPlaceholder: 'var(--color-text-muted)',
-                    borderRadius: 12,
-                    fontSize: 15,
-                    controlHeight: 44,
-                },
-                components: {
-                    Select: {
-                        colorBgContainer: '#ffffff',
-                        colorBgElevated: '#ffffff',
-                        optionSelectedBg: '#e7f0ee',
-                        optionActiveBg: '#f2f7f5',
-                        selectorBg: '#ffffff',
-                    },
-                },
-            }}
-        >
-            <div className="page-shell">
-                <section className="hero-panel">
-                    <p className="hero-kicker">Recruiter Directory</p>
-                    <h1 className="hero-title">Find recruiters by company</h1>
-                    <p className="hero-subtitle">
-                        Search a company domain, fetch the list, and open detailed profiles from a dedicated page.
-                    </p>
-                </section>
+      if (selectedCompany.companyId) {
+        response = await getRecruitersByCompanyId(selectedCompany.companyId);
+      } else {
+        response = await getRecruitersByDomain(selectedCompany.domain);
+      }
 
-                <section className="search-panel">
-                    <div className="search-icon"><Building2 size={20} /></div>
-                    <div className="search-field">
-                        <label style={labelStyle}>Company search</label>
-                        <Select
-                            showSearch
-                            filterOption={false}
-                            labelInValue
-                            placeholder="Type at least 2 characters"
-                            value={selectedCompany ? {
-                                value: selectedCompany.value,
-                                label: selectedCompany.label,
-                            } : undefined}
-                            onSearch={handleCompanySearch}
-                            onChange={handleCompanyChange}
-                            notFoundContent={loadingCompanies ? <Spin size="small" /> : null}
-                            options={companyOptions}
-                            style={{ width: '100%' }}
-                            size="large"
-                        />
-                    </div>
+      const recruiterList = response?.resp?.recruiters || [];
+      const searchLabel = `${selectedCompany.companyName} (${selectedCompany.domain})`;
 
-                    <button
-                        className="primary-button"
-                        onClick={searchRecruitersByCompanySelection}
-                        disabled={loadingRecruiters}
-                    >
-                        {loadingRecruiters ? 'Searching...' : 'View Recruiters'}
-                        {loadingRecruiters ? null : <ArrowRight size={18} />}
-                    </button>
-                </section>
+      if (!recruiterList.length) {
+        setErrorMessage('No recruiters found for the selected company/domain.');
+        return;
+      }
 
-                {errorMessage ? (
-                    <div className="error-banner">{errorMessage}</div>
-                ) : null}
-            </div>
-        </ConfigProvider>
-    );
+      const payload = {
+        recruiters: recruiterList,
+        searchLabel,
+        updatedAt: Date.now(),
+      };
+
+      sessionStorage.setItem(RECRUITER_RESULTS_STORAGE_KEY, JSON.stringify(payload));
+      navigate('/recruiters', { state: payload });
+    } finally {
+      setLoadingRecruiters(false);
+    }
+  };
+
+  return (
+    <ConfigProvider
+      theme={{
+        algorithm: theme.defaultAlgorithm,
+        token: {
+          colorPrimary: 'var(--color-primary)',
+          colorBgContainer: 'var(--color-surface)',
+          colorBorder: 'var(--color-border)',
+          colorText: 'var(--color-text-main)',
+          colorTextBase: 'var(--color-text-main)',
+          colorTextPlaceholder: 'var(--color-text-muted)',
+          borderRadius: 16,
+          fontSize: 15,
+          controlHeight: 56,
+        },
+        components: {
+          Select: {
+            colorBgContainer: 'var(--color-surface)',
+            colorBgElevated: 'var(--color-surface)',
+            colorBorder: 'var(--color-border)',
+            colorPrimary: 'var(--color-primary)',
+            colorPrimaryHover: 'var(--color-primary)',
+            colorText: 'var(--color-text-main)',
+            colorTextPlaceholder: 'var(--color-text-muted)',
+            optionSelectedBg: 'var(--color-surface-muted)',
+            optionActiveBg: 'var(--color-surface-muted)',
+            optionSelectedColor: 'var(--color-text-main)',
+            selectorBg: 'var(--color-surface)',
+            activeBorderColor: 'var(--color-primary)',
+            hoverBorderColor: 'var(--color-primary)',
+          },
+        },
+      }}
+    >
+      <div className="page-shell">
+        <RevealOnScroll className="hero-panel hero-panel--fullscreen is-visible">
+          <SectionIntro
+            className="section-intro--full"
+            kicker="Recruiter Directory"
+            title="Discover the right recruiter contact before your outreach starts."
+            description="Recly helps you search company domains, pull recruiter results fast, and move into profile review with a cleaner, modern workflow."
+          />
+        </RevealOnScroll>
+
+        <RevealOnScroll className="landing-search-section" delay={120}>
+          <SearchPanel
+            selectedCompany={selectedCompany}
+            companyOptions={companyOptions}
+            loadingCompanies={loadingCompanies}
+            loadingRecruiters={loadingRecruiters}
+            onCompanySearch={handleCompanySearch}
+            onCompanyChange={handleCompanyChange}
+            onSearch={searchRecruitersByCompanySelection}
+          />
+        </RevealOnScroll>
+
+        {errorMessage ? <div className="error-banner">{errorMessage}</div> : null}
+      </div>
+    </ConfigProvider>
+  );
 };
 
 export default LandingPage;
