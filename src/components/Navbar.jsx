@@ -16,7 +16,6 @@ const Navbar = () => {
             padding: '1rem 2rem',
         }}>
             <div style={{
-                maxWidth: '1200px',
                 margin: '0 auto',
                 display: 'flex',
                 justifyContent: 'space-between',
