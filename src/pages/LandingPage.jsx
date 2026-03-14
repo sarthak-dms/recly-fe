@@ -1,20 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Select, ConfigProvider, theme, Spin } from 'antd';
-import {
-    searchCompanies,
-    getRecruitersByCompanyId,
-    getRecruitersByDomain,
-} from '../services/recruiterService';
+import { searchCompanies } from '../services/recruiterService';
 
 const LandingPage = () => {
-    const [recruiters, setRecruiters] = useState([]);
-    const [lastSearchLabel, setLastSearchLabel] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [companyOptions, setCompanyOptions] = useState([]);
     const [loadingCompanies, setLoadingCompanies] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState(null);
-    const [loadingRecruiters, setLoadingRecruiters] = useState(false);
     const searchTimeoutRef = useRef(null);
     const searchSectionRef = useRef(null);
 
@@ -62,36 +55,21 @@ const LandingPage = () => {
         setErrorMessage('');
     };
 
-    const searchRecruitersByCompanySelection = async () => {
+    const searchRecruitersByCompanySelection = () => {
         if (!selectedCompany) {
             setErrorMessage('Select a company from the dropdown first.');
             return;
         }
 
-        setLoadingRecruiters(true);
         setErrorMessage('');
 
-        try {
-            let response;
+        const params = new URLSearchParams({
+            companyId: selectedCompany.companyId || '',
+            domain: selectedCompany.domain || '',
+            companyName: selectedCompany.companyName || '',
+        });
 
-            if (selectedCompany.companyId) {
-                response = await getRecruitersByCompanyId(selectedCompany.companyId);
-            } else {
-                response = await getRecruitersByDomain(selectedCompany.domain);
-            }
-
-            const recruiterList = response?.resp?.recruiters || [];
-            setRecruiters(recruiterList);
-            setLastSearchLabel(
-                `${selectedCompany.companyName} (${selectedCompany.domain})`
-            );
-
-            if (!recruiterList.length) {
-                setErrorMessage('No recruiters found for the selected company/domain.');
-            }
-        } finally {
-            setLoadingRecruiters(false);
-        }
+        window.open(`/results?${params.toString()}`, '_blank');
     };
 
     const labelStyle = {
@@ -303,91 +281,6 @@ const LandingPage = () => {
                     >
                         Search by Company <ArrowRight size={20} />
                     </button>
-                </div>
-
-                {/* Results Card */}
-                <div style={{
-                    width: '100%',
-                    maxWidth: '900px',
-                    background: 'rgba(15, 23, 42, 0.4)',
-                    padding: '2rem',
-                    borderRadius: '24px',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    backdropFilter: 'blur(10px)',
-                    textAlign: 'left',
-                }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '1rem',
-                        marginBottom: '1rem',
-                        flexWrap: 'wrap',
-                    }}>
-                        <div>
-                            <h3 style={{ margin: 0, fontSize: '1.5rem' }}>Recruiter Results</h3>
-                            <p style={{ color: 'var(--color-text-muted)', margin: '0.5rem 0 0 0' }}>
-                                {lastSearchLabel || 'Search for a company to see results.'}
-                            </p>
-                        </div>
-                        {loadingRecruiters ? <Spin /> : null}
-                    </div>
-
-                    {errorMessage ? (
-                        <div style={{
-                            marginBottom: '1rem',
-                            padding: '1rem',
-                            borderRadius: '12px',
-                            background: 'rgba(248, 113, 113, 0.12)',
-                            border: '1px solid rgba(248, 113, 113, 0.25)',
-                            color: '#fecaca',
-                        }}>
-                            {errorMessage}
-                        </div>
-                    ) : null}
-
-                    {recruiters.length ? (
-                        <div style={{
-                            display: 'grid',
-                            gap: '1rem',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                        }}>
-                            {recruiters.map((recruiter) => (
-                                <div
-                                    key={`${recruiter.id}-${recruiter.email}`}
-                                    style={{
-                                        background: 'rgba(30, 41, 59, 0.7)',
-                                        border: '1px solid rgba(255, 255, 255, 0.06)',
-                                        borderRadius: '18px',
-                                        padding: '1.25rem',
-                                    }}
-                                >
-                                    <div style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '0.35rem' }}>
-                                        {recruiter.name}
-                                    </div>
-                                    <div style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-                                        {recruiter.designation || 'No designation'}
-                                    </div>
-                                    <div style={{ display: 'grid', gap: '0.45rem', color: '#cbd5e1' }}>
-                                        <span><strong>Email:</strong> {recruiter.email}</span>
-                                        <span><strong>Phone:</strong> {recruiter.phone || 'N/A'}</span>
-                                        <span><strong>Company:</strong> {recruiter.companyName || 'N/A'}</span>
-                                        <span><strong>Domain:</strong> {recruiter.domain || 'N/A'}</span>
-                                        <span><strong>Company Id:</strong> {recruiter.companyId ?? 'N/A'}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div style={{
-                            padding: '1.25rem',
-                            borderRadius: '16px',
-                            background: 'rgba(30, 41, 59, 0.45)',
-                            color: 'var(--color-text-muted)',
-                        }}>
-                            No recruiters loaded yet.
-                        </div>
-                    )}
                 </div>
             </div>
         </ConfigProvider>
